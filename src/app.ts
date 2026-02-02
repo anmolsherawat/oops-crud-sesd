@@ -58,7 +58,7 @@ export class App implements AppInterface {
   }
 
   private initializeErrorHandling(): void {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
     this.app.use(
       (err: Error, _req: Request, res: Response, _next: NextFunction) => {
         console.error(err);
