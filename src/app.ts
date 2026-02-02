@@ -1,7 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { bookRouter } from "./routes/book.routes";
+import { studentRouter } from "./routes/student.routes";
 
 dotenv.config();
 
@@ -51,20 +51,20 @@ export class App implements AppInterface {
 
   public initializeRoutes(): void {
     this.app.get("/", (_req: Request, res: Response) => {
-      res.json({ message: "OOP CRUD API is running" });
+      res.json({ message: "Student Management OOP CRUD API is running" });
     });
 
-    this.app.use("/api/books", bookRouter);
+    this.app.use("/api/students", studentRouter);
   }
 
   private initializeErrorHandling(): void {
-
     this.app.use(
       (err: Error, _req: Request, res: Response, _next: NextFunction) => {
         console.error(err);
-        res
-          .status(400)
-          .json({ success: false, message: err.message || "Something went wrong" });
+        res.status(400).json({
+          success: false,
+          message: err.message || "Something went wrong",
+        });
       }
     );
   }
