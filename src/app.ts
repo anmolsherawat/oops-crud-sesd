@@ -1,43 +1,71 @@
-import express from "express";
+import express, { Application, Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
-import {useRoutes} from "./controller/todo.controller"
+import dotenv from "dotenv";
+import { bookRouter } from "./routes/book.routes";
 
-interface APP_Interface{
-    startServer():void;
-    ConnectDatabase():void;
-    initaializeRoutes():void;
+dotenv.config();
+
+interface AppInterface {
+  startServer(): void;
+  connectDatabase(): Promise<void>;
+  initializeMiddlewares(): void;
+  initializeRoutes(): void;
 }
 
-export class App implements APP_Interface{
+export class App implements AppInterface {
+  private readonly port: number;
+  public app: Application;
 
-    PORT:number;
-    app:express.Application;
+  constructor() {
+    this.port = Number(process.env.PORT) || 4000;
+    this.app = express();
 
-    constructor(){
-        this.PORT = 4000;
-        this.app=express()
-        this.startServer()
-        this.initaializeRoutes()
+    this.initializeMiddlewares();
+    this.initializeRoutes();
+    this.initializeErrorHandling();
+  }
+
+  public async startServer(): Promise<void> {
+    await this.connectDatabase();
+    this.app.listen(this.port, () => {
+      console.log(`Server running on port ${this.port}`);
+    });
+  }
+
+  public async connectDatabase(): Promise<void> {
+    const uri =
+      process.env.MONGO_URI || "mongodb://127.0.0.1:27017/sesd_workshop";
+
+    try {
+      await mongoose.connect(uri);
+      console.log("Database connected");
+    } catch (err) {
+      console.error("Failed to connect to database", err);
+      process.exit(1);
     }
+  }
 
+  public initializeMiddlewares(): void {
+    this.app.use(express.json());
+  }
 
-    startServer():void{
-        this.app.listen(this.PORT,()=>{
-            console.log("Server running!!!");
-        })
-    }
+  public initializeRoutes(): void {
+    this.app.get("/", (_req: Request, res: Response) => {
+      res.json({ message: "OOP CRUD API is running" });
+    });
 
-    async ConnectDatabase():Promise<void>{
-        try{
-            await mongoose.connect("")
-            console.log("Database Connected")
-        }
-        catch(err){
-            console.log("URL not found")
-        }
-    }
+    this.app.use("/api/books", bookRouter);
+  }
 
-    initaializeRoutes():void{
-        console.log("Routes Initialized");
-    }
+  private initializeErrorHandling(): void {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    this.app.use(
+      (err: Error, _req: Request, res: Response, _next: NextFunction) => {
+        console.error(err);
+        res
+          .status(400)
+          .json({ success: false, message: err.message || "Something went wrong" });
+      }
+    );
+  }
 }

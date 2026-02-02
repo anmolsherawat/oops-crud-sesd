@@ -1,3 +1,11 @@
-import {App} from "./app"
+import { App } from "./app";
 
-let app=new App()
+async function bootstrap() {
+  const app = new App();
+  await app.startServer();
+}
+
+bootstrap().catch((err) => {
+  console.error("Failed to start application", err);
+  process.exit(1);
+});
