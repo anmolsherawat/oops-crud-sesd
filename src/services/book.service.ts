@@ -49,8 +49,12 @@ export class BookService {
   }
 
   private validateCreateData(data: CreateBookDTO) {
-    if (!data.title || !data.author || !data.publishedYear) {
-      throw new Error("title, author and publishedYear are required");
+    if (!data.title || !data.author) {
+      throw new Error("title and author are required");
+    }
+
+    if (data.publishedYear === undefined || data.publishedYear === null) {
+      throw new Error("publishedYear is required");
     }
 
     if (typeof data.publishedYear !== "number") {
