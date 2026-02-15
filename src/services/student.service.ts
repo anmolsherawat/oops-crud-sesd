@@ -59,13 +59,13 @@ export class StudentService {
     }
 
     if (data.age !== undefined && typeof data.age !== "number") {
-      throw new Error("age must be a number");
+      throw new Error("Age must be a number");
     }
   }
 
   private validateUpdateData(data: UpdateStudentDTO) {
     if (data.age !== undefined && typeof data.age !== "number") {
-      throw new Error("age must be a number");
+      throw new Error("Age must be a number");
     }
   }
 }
