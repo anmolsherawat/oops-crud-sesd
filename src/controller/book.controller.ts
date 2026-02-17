@@ -61,7 +61,7 @@ export class BookController {
     try {
       const book = await this.service.getBookById(req.params.id);
       if (!book) {
-        return res.status(404).json({ success: false, message: "Book not found" });
+        return res.status(404).json({ success: false, message: "Book not found error" });
       }
       res.json({ success: true, data: book });
     } catch (error) {
